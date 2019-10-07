@@ -1,39 +1,51 @@
 # robobo-gazebo-simulator
 
-Repository for Robobo robot simulation in the Gazebo environment.
+Repository for Robobo robot simulation in the Gazebo environment (ROS 2 Dashing)
 
 ## Requirements
 
-* Ubuntu 16.04
-* Robot Operating System - Kinetic
-* Gazebo7
+* Ubuntu 18.04.x
+* Robot Operating System - Dashing
+* Gazebo 9
 
-## Installation
-
-This model uses the original Robobo ROS messages, so it is necessary to use the robobo_msgs package, avaliable on https://github.com/mintforpeople/robobo-ros-msgs/tree/master/robobo_msgs.
-Clone the respository in your own workspace and compile:
-
-
+## Install ROS 2 Dashing
 ```bash
-$ cd <catkin_ws>/src
-$ git clone https://github.com/mintforpeople/robobo-gazebo-simulator
-$ git clone https://github.com/mintforpeople/robobo-ros-msgs/tree/master/robobo_msgs
-$ catkin_make
+sudo apt update && sudo apt install curl gnupg2 lsb-release
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
+sudo apt-get update
+sudo apt install ros-dashing-desktop
+sudo apt-get install ros-dashing-gazebo-ros
+sudo apt-get install ros-dashing-gazebo-plugins
+```
+## Create ROS Workspace
+```bash
+mkdir -p ~/ros2_ws/src && cd ~/ros2_ws
+colcon build
 ```
 
-## Basic Usage
+## Install Robobo messages for ROS 2
+	* Download archive from https://github.com/mintforpeople/robobo-ros2-msgs
+	* Decompress archive in workspace
 
-You must do the first two steps in each new terminal you need to use the model:
 
+## Load workspace
+`source ros2_ws/install/setup.bash`
+
+## Compile workspace
 ```bash
-$ cd <catkin_ws>/src
-$ source devel/setup.bash
+cd ros2_ws
+colcon build --symlink-install
 ```
 
-To launch the model:
-
+## Test Gazebo ros plugin
 ```bash
-$ roslaunch robobo_gazebo robobo.launch
+gazebo --verbose -s libgazebo_ros_factory.so
+```
+
+## Launch the model
+```bash
+ros2 launch robobo_gazebo robobo.launch.py
 ```
 
 To interact with the model you have the following ROS topics and services. They are the same ones used in the real Robobo, there is more information here: https://github.com/mintforpeople/robobo-programming/wiki/ROS.
@@ -81,6 +93,3 @@ More information: <a href="http://rosin-project.eu">rosin-project.eu</a>
 
 This project has received funding from the European Union’s Horizon 2020  
 research and innovation programme under grant agreement no. 732287. 
-
-
-
