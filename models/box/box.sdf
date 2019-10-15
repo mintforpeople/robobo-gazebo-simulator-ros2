@@ -29,11 +29,12 @@
 		                <size>0.1 0.23 0.185</size>
 		            </box>
 		        </geometry>
-			<material>
+				<material>
                     		<script>
                         		<uri>file://media/materials/scripts/gazebo.material</uri>
                         		<name>Gazebo/White</name>
                     		</script>
+            	</material>
 		    </visual>
 		</link>
 	</model>
