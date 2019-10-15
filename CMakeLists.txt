@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(robobo_gazebo_ros2)
+project(robobo_gazebo)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -76,8 +76,14 @@ install(TARGETS
 	DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch
+install(DIRECTORY models worlds launch
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(
+  PROGRAMS
+  scripts/spawn_robobo.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>robobo_gazebo_ros2</name>
+  <name>robobo_gazebo</name>
   <version>0.1.0</version>
   <description>Simulation of Robobo in Gazebo package</description>
 

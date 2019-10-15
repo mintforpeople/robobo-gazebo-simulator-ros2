@@ -15,15 +15,19 @@ def generate_launch_description():
 
     install_dir = get_package_prefix('robobo_gazebo')
 
+    model_dir = os.path.join(get_package_share_directory('robobo_gazebo'), 'models')
+
     if 'GAZEBO_MODEL_PATH' in os.environ:
-        os.environ['GAZEBO_MODEL_PATH'] =  os.environ['GAZEBO_MODEL_PATH'] + ':' + install_dir + '/models'
+        os.environ['GAZEBO_MODEL_PATH'] =  os.environ['GAZEBO_MODEL_PATH'] + ':' + model_dir
     else:
-        os.environ['GAZEBO_MODEL_PATH'] =  install_dir + '/models'
+        os.environ['GAZEBO_MODEL_PATH'] = model_dir
+
+    lib_dir = os.path.join(install_dir, 'lib')
 
     if 'GAZEBO_PLUGIN_PATH' in os.environ:
-        os.environ['GAZEBO_PLUGIN_PATH'] = os.environ['GAZEBO_PLUGIN_PATH'] + ':' + install_dir + '/lib'
+        os.environ['GAZEBO_PLUGIN_PATH'] = os.environ['GAZEBO_PLUGIN_PATH'] + ':' + lib_dir
     else:
-        os.environ['GAZEBO_PLUGIN_PATH'] = install_dir + '/lib'
+        os.environ['GAZEBO_PLUGIN_PATH'] = os.path.join(install_dir, '/lib')
 
     try:
         envs = {}
@@ -35,11 +39,14 @@ def generate_launch_description():
         print("Error with Envs: " + str(e))
         return None
 
+    robot_name = 'robobo'
+    robot_namespace = 'robobo'
     ld = LaunchDescription([
         ExecuteProcess(
             cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so'], output='screen',
             env=envs
         ),
-        
+        Node(package='robobo_gazebo', node_executable='spawn_robobo.py', 
+            arguments=[robot_name, robot_namespace, '0.0', '0.0', '0.1'], output='screen')
     ])
     return ld

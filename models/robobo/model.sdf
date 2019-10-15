@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.6">
-    <model name="Robobo">
+    <model name="robobo">
         <static>0</static>
 
         <!-- LINKS -->
@@ -19,11 +19,9 @@
             </inertial>
             <collision name="body_collision">
                 <geometry>
-                    <mesh>
-                        <uri>
-                            model://robobo_gazebo/models/robobo/meshes/body_collision.dae
-                        </uri>
-                    </mesh>
+                	<mesh>
+                		<uri>model://robobo/meshes/body_collision.dae</uri>
+                	</mesh>
                 </geometry>
                 <surface>
                     <friction>
@@ -43,11 +41,9 @@
             </collision>
             <visual name="body_visual">
                 <geometry>
-                    <mesh>
-                        <uri>
-                            model://robobo_gazebo/models/robobo/meshes/body_visual.dae
-                        </uri>
-                    </mesh>
+                	<mesh>
+                		<uri>model://robobo/meshes/body_visual.dae</uri>
+                	</mesh>
                 </geometry>
             </visual>
             <!--IR SENSORS-->
@@ -305,11 +301,9 @@
             <visual name="lw_visual">
                 <pose>0 -0.0024 0 0 0 0</pose>
                 <geometry>
-                    <mesh>
-                        <uri>
-                            model://robobo_gazebo/models/robobo/meshes/left_wheel_visual.dae
-                        </uri>
-                    </mesh>
+                	<mesh>
+                		<uri>model://robobo/meshes/left_wheel_visual.dae</uri>
+                	</mesh>
                 </geometry>
             </visual>
         </link>
@@ -355,7 +349,7 @@
                 <geometry>
                     <mesh>
                         <uri>
-                            model://robobo_gazebo/models/robobo/meshes/right_wheel_visual.dae
+                            model://robobo/meshes/right_wheel_visual.dae
                         </uri>
                     </mesh>
                 </geometry>
@@ -386,7 +380,7 @@
                 <geometry>
                     <mesh>
                         <uri>
-                            model://robobo_gazebo/models/robobo/meshes/pan_visual.dae
+                            model://robobo/meshes/pan_visual.dae
                         </uri>
                     </mesh>
                 </geometry>
@@ -418,7 +412,7 @@
                 <geometry>
                     <mesh>
                         <uri>
-                            model://robobo_gazebo/models/robobo/meshes/tilt_smartphone_visual.dae
+                            model://robobo/meshes/tilt_smartphone_visual.dae
                         </uri>
                     </mesh>
                 </geometry>
