@@ -260,7 +260,7 @@
 
 
         <!-- HASTA aqui IR -->
-        </link>
+        </link> <!-- end of body link -->
         <link name="left_wheel">
             <pose>-0.082628 -0.038096 0.03225 0 0 0</pose>
             <inertial>

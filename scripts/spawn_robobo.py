@@ -31,7 +31,7 @@ def main():
         client.wait_for_service()
         node.get_logger().info("...connected!")
 
-    # Get path to the turtlebot3 burgerbot
+    # Get path to the robobo model
     sdf_file_path = os.path.join(get_package_share_directory("robobo_gazebo"), "models", "robobo", "model.sdf")
     
     # Set data for request

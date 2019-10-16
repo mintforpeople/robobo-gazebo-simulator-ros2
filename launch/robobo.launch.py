@@ -47,6 +47,6 @@ def generate_launch_description():
             env=envs
         ),
         Node(package='robobo_gazebo', node_executable='spawn_robobo.py', 
-            arguments=[robot_name, robot_namespace, '0.0', '0.0', '0.1'], output='screen')
+            arguments=[robot_name, robot_namespace, '0.0', '0.0', '2.0'], output='screen')
     ])
     return ld
