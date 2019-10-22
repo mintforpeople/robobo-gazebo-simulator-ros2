@@ -38,11 +38,6 @@ cd ros2_ws
 colcon build --symlink-install
 ```
 
-## Test Gazebo ros plugin
-```bash
-gazebo --verbose -s libgazebo_ros_factory.so
-```
-
 ## Launch the model
 ```bash
 ros2 launch robobo_gazebo robobo.launch.py
@@ -61,11 +56,16 @@ Topics availables:
 * /\<modelName\>/wheels
 
 Services availables:
-* /\<modelName>\/movewheels
-* /\<modelName>\/resetWheels
-* /\<modelName>\/movePanTilt
+* /\<modelName>\/move_wheels
+* /\<modelName>\/reset_wheels
+* /\<modelName>\/move_pan_tilt
 
 \<modelName\> is robot by default but it can be changed for other name in the launch file.
+
+## Run test script
+```bash
+ros2 run robobo_gazebo robobo_validation.py
+```
 
 ## Remark
 This package includes one node in python with the function of publishing all infrared sensor values in only one topic. This program reads all topics published by plugin infrared_range.cpp in each ray sensor of the model and brings them all together in one topic, like in the real Robobo.
