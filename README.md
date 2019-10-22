@@ -60,7 +60,7 @@ Services availables:
 * /\<modelName>\/reset_wheels
 * /\<modelName>\/move_pan_tilt
 
-\<modelName\> is robot by default but it can be changed for other name in the launch file.
+\<modelName\> is robobo by default.
 
 ## Run test script
 ```bash

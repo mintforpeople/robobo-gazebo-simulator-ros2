@@ -434,7 +434,7 @@
                     <frameName>Camera</frameName>
                 </plugin>
             </sensor> -->
-            <!-- IMU 
+            <!-- IMU -
             <sensor name="imu_sensor" type="imu">
                 <visualize>false</visualize>
                 <plugin name="imu_plugin" filename="librobobo_imu_sensor.so">

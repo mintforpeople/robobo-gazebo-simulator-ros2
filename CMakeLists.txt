@@ -59,8 +59,6 @@ ament_export_libraries(robobo_imu_sensor)
 
 #ament_export_include_directories(include)
 #ament_export_dependencies(rclcpp rclpy gazebo_ros gazebo_plugins)
-#ament_export_libraries(move_wheels move_pan_tilt encoders 
-#	infrared_range robobo_camera_utils robobo_camera robobo_imu_sensor)
 
 install(TARGETS
 	move_wheels
