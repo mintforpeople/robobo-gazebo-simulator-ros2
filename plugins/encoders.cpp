@@ -65,9 +65,7 @@ namespace gazebo {
 
           rclcpp::Service<robobo_msgs::srv::ResetWheels>::SharedPtr srv_;
 
-		/* la parte del callbackqueue no es compatible con ROS2 
-		hay que hacerlo de otra manera CallBackGroups o algo asi */
-		//rclcpp::CallbackQueue rosQueue;
+          rclcpp::callback_group::CallbackGroup::SharedPtr cb_grp1_;
 
         public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
         {	
@@ -87,15 +85,18 @@ namespace gazebo {
             this->pubPan = this->ros_node_->create_publisher<std_msgs::msg::Int16>("/" + this->model->GetName() + "/pan", 1);
             this->pubTilt = this->ros_node_->create_publisher<std_msgs::msg::Int16>("/" + this->model->GetName() + "/tilt", 1);
 
-           subscription_ = ros_node_->create_subscription<gazebo_msgs::msg::LinkStates>("/gazebo/link_states",1, 
+            subscription_ = ros_node_->create_subscription<gazebo_msgs::msg::LinkStates>("/gazebo/link_states",1, 
 						std::bind(&Encoders::Callback, this, std::placeholders::_1));
 
             /* hacer esto de otra manera
             this->rosQueueThread = std::thread(std::bind (&Encoders::QueueThread, this)); */
 
+            cb_grp1_ = this->ros_node_->create_callback_group(rclcpp::callback_group::CallbackGroupType::MutuallyExclusive);
+
              // Create ResetWheels service
-            srv_ = ros_node_->create_service<robobo_msgs::srv::ResetWheels>("/" + this->model->GetName() + "/resetWheels",
-                   std::bind(&Encoders::CallbackResetWheels, this, std::placeholders::_1, std::placeholders::_2));
+            srv_ = ros_node_->create_service<robobo_msgs::srv::ResetWheels>("/" + this->model->GetName() + "/reset_wheels",
+                   std::bind(&Encoders::CallbackResetWheels, this, std::placeholders::_1, std::placeholders::_2), 
+                   rmw_qos_profile_services_default,cb_grp1_);
         }
 
         public: void Callback(const gazebo_msgs::msg::LinkStates::SharedPtr msg)

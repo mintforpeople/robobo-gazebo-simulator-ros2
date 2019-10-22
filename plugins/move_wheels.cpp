@@ -64,7 +64,7 @@ namespace gazebo
 
             // Create MoveWheels service
             this->srv_ = ros_node_->create_service<robobo_msgs::srv::MoveWheels>
-                    ("/" + this->model->GetName() + "/moveWheels",
+                    ("/" + this->model->GetName() + "/move_wheels",
                     std::bind(&MoveWheels::Callback, this, std::placeholders::_1, std::placeholders::_2));
         }
 
@@ -137,6 +137,7 @@ namespace gazebo
             // Set joints velocity
             this->model->GetJoint("left_motor")->SetParam("vel", 0, lspeedGazebo);
             this->model->GetJoint("right_motor")->SetParam("vel", 0, rspeedGazebo);
+
             usleep(this->time * 1E6);
             this->model->GetJoint("left_motor")->SetParam("vel", 0, double(0));
             this->model->GetJoint("right_motor")->SetParam("vel", 0, double(0));

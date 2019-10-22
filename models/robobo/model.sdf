@@ -433,7 +433,8 @@
                 <plugin name="camera_controller2" filename="librobobo_camera.so">
                     <frameName>Camera</frameName>
                 </plugin>
-            </sensor>
+            </sensor> -->
+            <!-- IMU 
             <sensor name="imu_sensor" type="imu">
                 <visualize>false</visualize>
                 <plugin name="imu_plugin" filename="librobobo_imu_sensor.so">
@@ -495,9 +496,9 @@
         </joint>
 
         <!-- PLUGINS OF MODEL-->
-        <!--<plugin name="encoders" filename="libencoders.so"/>
+        <plugin name="encoders" filename="libencoders.so"/>
         <plugin name="move_wheels" filename="libmove_wheels.so"/>
-        <plugin name="move_pan_tilt" filename="libmove_pan_tilt.so"/>-->
+        <plugin name="move_pan_tilt" filename="libmove_pan_tilt.so"/>
 
     </model>
 </sdf>

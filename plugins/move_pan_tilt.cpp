@@ -16,8 +16,8 @@
  *
  ******************************************************************************/
 
-/* This plugin is used to create the MovePanTilt service to move pan and tilt motors in the Gazebo model of Robobo
-/** \author David Casal. */
+/* This plugin is used to create the MovePanTilt service to move pan and tilt motors in the Gazebo model of Robobo */
+
 #ifndef _MOVE_PAN_TILT_HH_
 #define _MOVE_PAN_TILT_HH_
 
@@ -28,7 +28,7 @@
 #include <gazebo_ros/node.hpp>
 #include <gazebo/physics/physics.hh>
 
-#include <robobo_msgs/msg/move_pan_tilt.hpp>
+#include <robobo_msgs/srv/move_pan_tilt.hpp>
 
 
 namespace gazebo
@@ -39,14 +39,12 @@ namespace gazebo
 
         public: MovePanTilt() {}
 
-            physics::JointControllerPtr jointController;
+            /// \brief A node use for ROS transport
+            gazebo_ros::Node::SharedPtr ros_node_;
             
         private:
             /// \brief Pointer to the model.
             physics::ModelPtr model;
-
-            /// \brief A node use for ROS transport
-            gazebo_ros::Node::SharedPtr ros_node_;
 
             /// \brief A thread the keeps running position setting
             std::thread MovePanTiltThread;
@@ -65,8 +63,8 @@ namespace gazebo
             // Safety check
             if (_model->GetJointCount() == 0)
             {
-            std::cerr << "Invalid joint count, model not loaded\n";
-            return;
+                std::cerr << "Invalid joint count, model not loaded\n";
+                return;
             }
 
             this->model = _model;
@@ -76,7 +74,7 @@ namespace gazebo
             /           
             // Create MovePanTilt service
             this->srv_ = ros_node_->create_service<robobo_msgs::srv::MovePanTilt>
-                    ("/" + this->model->GetName() + "/movePanTilt", 
+                    ("/" + this->model->GetName() + "/move_pan_tilt", 
                     std::bind(&MovePanTilt::Callback, this, std::placeholders::_1, std::placeholders::_2));
 
             // Set pan and tilt initial positions
