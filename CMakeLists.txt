@@ -30,7 +30,7 @@ ament_target_dependencies(move_wheels
 )
 ament_export_libraries(move_wheels)
 
-add_library(move_pan_tilt SHARED plugins/encoders.cpp)
+add_library(move_pan_tilt SHARED plugins/move_pan_tilt.cpp)
 ament_target_dependencies(move_pan_tilt
 	"gazebo_dev"
 	"gazebo_ros"

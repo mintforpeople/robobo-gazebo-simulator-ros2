@@ -88,9 +88,6 @@ namespace gazebo {
             subscription_ = ros_node_->create_subscription<gazebo_msgs::msg::LinkStates>("/gazebo/link_states",1, 
 						std::bind(&Encoders::Callback, this, std::placeholders::_1));
 
-            /* hacer esto de otra manera
-            this->rosQueueThread = std::thread(std::bind (&Encoders::QueueThread, this)); */
-
             cb_grp1_ = this->ros_node_->create_callback_group(rclcpp::callback_group::CallbackGroupType::MutuallyExclusive);
 
              // Create ResetWheels service
@@ -139,14 +136,6 @@ namespace gazebo {
             this->l_reset = round(this->model->GetJoint("left_motor")->Position());
         }
 
-        private: void QueueThread()
-        { /*
-            static const double timeout = 0.01;
-            while (this->rosNode->ok())
-            {
-                this->rosQueue.callAvailable(ros::WallDuration(timeout));
-            }*/
-        }
 
     };
 

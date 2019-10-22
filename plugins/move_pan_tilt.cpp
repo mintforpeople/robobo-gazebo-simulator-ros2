@@ -41,7 +41,7 @@ namespace gazebo
 
             /// \brief A node use for ROS transport
             gazebo_ros::Node::SharedPtr ros_node_;
-            
+    
         private:
             /// \brief Pointer to the model.
             physics::ModelPtr model;
@@ -50,6 +50,8 @@ namespace gazebo
             std::thread MovePanTiltThread;
 
             rclcpp::Service<robobo_msgs::srv::MovePanTilt>::SharedPtr srv_;
+
+            rclcpp::callback_group::CallbackGroup::SharedPtr cb_grp1_;
 
             // MovePanTilt parameters
             int panPos;
@@ -71,58 +73,61 @@ namespace gazebo
 
             ros_node_ = gazebo_ros::Node::Get(_sdf);
 
-            /           
+            cb_grp1_ = this->ros_node_->create_callback_group(rclcpp::callback_group::CallbackGroupType::MutuallyExclusive);
+
             // Create MovePanTilt service
             this->srv_ = ros_node_->create_service<robobo_msgs::srv::MovePanTilt>
                     ("/" + this->model->GetName() + "/move_pan_tilt", 
-                    std::bind(&MovePanTilt::Callback, this, std::placeholders::_1, std::placeholders::_2));
+                    std::bind(&MovePanTilt::Callback, this, std::placeholders::_1, std::placeholders::_2),
+                    rmw_qos_profile_services_default,cb_grp1_);
 
             // Set pan and tilt initial positions
             this->model->GetJoint("tilt_motor")->SetPosition(0, 1.22);
-            this->model->GetJoint("tilt_motor")->SetLowStop(0, 1.22);
-            this->model->GetJoint("tilt_motor")->SetHighStop(0, 1.22);
+            this->model->GetJoint("tilt_motor")->SetLowerLimit(0, 1.22);
+            this->model->GetJoint("tilt_motor")->SetUpperLimit(0, 1.22);
             this->model->GetJoint("pan_motor")->SetPosition(0, M_PI);
-            this->model->GetJoint("pan_motor")->SetLowStop(0, M_PI);
-            this->model->GetJoint("pan_motor")->SetHighStop(0, M_PI);
+            this->model->GetJoint("pan_motor")->SetLowerLimit(0, M_PI);
+            this->model->GetJoint("pan_motor")->SetUpperLimit(0, M_PI);
         }
 
         public: bool Callback(const std::shared_ptr<robobo_msgs::srv::MovePanTilt::Request> req, 
                              const std::shared_ptr<robobo_msgs::srv::MovePanTilt::Response> res)
         {
-            this->panPos = req.panPos.data;
-            this->tiltPos = req.tiltPos.data;
-            if (req.panSpeed.data > 100)
+            this->panPos = req->panpos.data;
+            this->tiltPos = req->tiltpos.data;
+            if (req->panspeed.data > 100)
             {
                 this->pp = 100;
             }
-            else if (req.panSpeed.data < 0)
+            else if (req->panspeed.data < 0)
             {
                 // If the velocity command is negative, Pan won't move
                 this->panPos = 0;
             }
             else
             {
-                this->pp = req.panSpeed.data;
+                this->pp = req->panspeed.data;
             }
-            if (req.tiltSpeed.data > 100)
+            if (req->tiltspeed.data > 100)
             {
                 this->tp = 100;
             }
-            else if (req.tiltSpeed.data < 0)
+            else if (req->tiltspeed.data < 0)
             {
                 // If the velocity command is negative, Tilt won't move
                 this->tiltPos = 0;
             }
             else
             {
-                this->tp = req.tiltSpeed.data;
+                this->tp = req->tiltspeed.data;
             }
             this->MovePanTiltThread = std::thread(std::bind (&MovePanTilt::Handle_MoveWheels, this));
-            this->MovePanTiltThread.join();
+            this->MovePanTiltThread.detach();
+            
             return true;
         }
 
-        private: void Handle_MoveWheels ()
+        private: void Handle_MoveWheels()
         {   
             double pspeedGazebo;
             double tspeedGazebo;
@@ -141,8 +146,8 @@ namespace gazebo
                     (abs(difPan) - (-1.99E-05 * pow(this->pp,3) + 1.064E-03 * pow(this->pp,2) - 0.33034 * this->pp - 8.9074E-01)) ) * M_PI / 180;
 
                 // Unlock joint position and set target velocity
-                this->model->GetJoint("pan_motor")->SetLowStop(0, 0.191);
-                this->model->GetJoint("pan_motor")->SetHighStop(0, 6.004);
+                this->model->GetJoint("pan_motor")->SetLowerLimit(0, 0.191);
+                this->model->GetJoint("pan_motor")->SetUpperLimit(0, 6.004);
                 if (this->model->GetJoint("pan_motor")->Position() < this->panPos)
                 {
                     while (this->model->GetJoint("pan_motor")->Position() < this->panPos)
@@ -159,8 +164,8 @@ namespace gazebo
                 }
                 // Lock joint position
                 this->model->GetJoint("pan_motor")->SetParam("vel", 0, 0);
-                this->model->GetJoint("pan_motor")->SetLowStop(0, this->model->GetJoint("pan_motor")->Position());
-                this->model->GetJoint("pan_motor")->SetHighStop(0, this->model->GetJoint("pan_motor")->Position());
+                this->model->GetJoint("pan_motor")->SetLowerLimit(0, this->model->GetJoint("pan_motor")->Position());
+                this->model->GetJoint("pan_motor")->SetUpperLimit(0, this->model->GetJoint("pan_motor")->Position());
             }
 
             // Set tilt position
@@ -172,8 +177,8 @@ namespace gazebo
                     (abs(diftilt) - ( -8.84E-05 * pow(this->tp,3) + 1.233E-02 * pow(this->tp,2) + -0.5495 * this->tp + 4.738)) ) * M_PI / 180;
 
                 // Unlock joint position and set target velocity
-                this->model->GetJoint("tilt_motor")->SetLowStop(0, 0.0873);
-                this->model->GetJoint("tilt_motor")->SetHighStop(0, 1.9199);
+                this->model->GetJoint("tilt_motor")->SetLowerLimit(0, 0.0873);
+                this->model->GetJoint("tilt_motor")->SetUpperLimit(0, 1.9199);
                 if (this->model->GetJoint("tilt_motor")->Position() < this->tiltPos)
                 {
                     while (this->model->GetJoint("tilt_motor")->Position() < this->tiltPos)
@@ -191,8 +196,8 @@ namespace gazebo
                 }
                 // Lock joint position
                 this->model->GetJoint("tilt_motor")->SetParam("vel", 0, 0);
-                this->model->GetJoint("tilt_motor")->SetLowStop(0, this->model->GetJoint("tilt_motor")->Position());
-                this->model->GetJoint("tilt_motor")->SetHighStop(0, this->model->GetJoint("tilt_motor")->Position());
+                this->model->GetJoint("tilt_motor")->SetLowerLimit(0, this->model->GetJoint("tilt_motor")->Position());
+                this->model->GetJoint("tilt_motor")->SetUpperLimit(0, this->model->GetJoint("tilt_motor")->Position());
             }
         }
 

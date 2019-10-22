@@ -10,14 +10,14 @@ from robobo_msgs.srv import MoveWheels, MovePanTilt
 
 def moveWheels(node, rspeed, lspeed, time):
     
-    client = node.create_client(MoveWheels, "/robobo/moveWheels")
+    client = node.create_client(MoveWheels, "/robobo/move_wheels")
     request = MoveWheels.Request()
     request.lspeed = lspeed
     request.rspeed = rspeed
     request.time = time*1000
     request.unlockid = 0
    
-    node.get_logger().info("Sending service request to `/robobo/moveWheels`")
+    node.get_logger().info("Sending service request to `/robobo/move_wheels`")
     while not client.wait_for_service(timeout_sec=1.0):
         node.get_logger().info('service not available, waiting again...')
 
@@ -33,16 +33,22 @@ def moveWheels(node, rspeed, lspeed, time):
             break
 
 def movePanTilt(node, panpos, panspeed, tiltpos, tiltspeed):
-    client = node.create_client(MovePanTilt, "/robobo/movePanTilt")
-    request = MovePanTilt.Request
-    request.panpos = panpos
-    request.panspeed == panspeed
-    request.panunlockid = 0
-    request.tiltpos = tiltpos
-    request.tiltspeed = tiltspeed
-    request.tiltunlockid = 0
+    client = node.create_client(MovePanTilt, "/robobo/move_pan_tilt")
+    request = MovePanTilt.Request()
+    request.panpos = Int16()
+    request.panpos.data = panpos
+    request.panspeed = Int8()
+    request.panspeed.data = panspeed
+    request.panunlockid = Int16()
+    request.panunlockid.data = 0
+    request.tiltpos = Int16()
+    request.tiltpos.data = tiltpos
+    request.tiltspeed = Int8()
+    request.tiltspeed.data = tiltspeed
+    request.tiltunlockid = Int16()
+    request.tiltunlockid.data = 0
        
-    node.get_logger().info("Sending service request to `/robobo/movePanTilt`")
+    node.get_logger().info("Sending service request to `/robobo/move_pan_tilt`")
     while not client.wait_for_service(timeout_sec=1.0):
         node.get_logger().info('service not available, waiting again...')
 
@@ -74,18 +80,17 @@ def main(args=None):
     SPEED = 15
     MAX_IR = 250
     # Time while Robobo will be exploring
-    EX_TIME = 30
+    exploring_time = 30
 
     movePanTilt(node, 180, 15, 85, 15)
 
-    end_time = node.get_clock().now() + rclpy.time.Duration(seconds=EX_TIME)
+    end_time = node.get_clock().now() + rclpy.time.Duration(seconds=exploring_time)
 
-    # 1 segundo pienso
-    moveWheels(node, SPEED, SPEED, 1)
+    moveWheels(node, SPEED, SPEED, 5)
 
     #while node.get_clock().now() < end_time:
         #exploreIR(SPEED, MAX_IR)
-    #    moveWheels(node, SPEED, SPEED, 100)
+        #moveWheels(node, SPEED, SPEED, 100)
 
     #moveWheels(node, 0, 0, 1)
 
