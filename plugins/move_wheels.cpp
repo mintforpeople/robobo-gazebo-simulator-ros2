@@ -51,19 +51,18 @@ namespace gazebo
 
         public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
         {
+            this->model = _model;
+            this->ros_node_ = gazebo_ros::Node::Get(_sdf);
+
             // Safety check
             if (_model->GetJointCount() == 0)
-            {
-                std::cerr << "Invalid joint count, model not loaded\n";
+            {   
+                RCLCPP_ERROR(this->ros_node_->get_logger(), "Invalid joint count, model not loaded");
                 return;
             }
 
-            this->model = _model;
-
-            ros_node_ = gazebo_ros::Node::Get(_sdf);
-
             // Create MoveWheels service
-            this->srv_ = ros_node_->create_service<robobo_msgs::srv::MoveWheels>
+            this->srv_ = this->ros_node_->create_service<robobo_msgs::srv::MoveWheels>
                     ("/" + this->model->GetName() + "/move_wheels",
                     std::bind(&MoveWheels::Callback, this, std::placeholders::_1, std::placeholders::_2));
         }
@@ -72,31 +71,31 @@ namespace gazebo
                             const std::shared_ptr<robobo_msgs::srv::MoveWheels::Response> res)
         {
             // Save service parameter values
-            if (req->rspeed < -100){
+            if (req->lspeed.data < -100){
 
                 this->lwp = -100;
             }
-            else if (req->lspeed > 100)
+            else if (req->rspeed.data > 100)
             {
                 this->lwp = 100;
             }
             else
             {
-                this->lwp = req->lspeed;
+                this->lwp = req->lspeed.data;
             }
-            if (req->rspeed < -100)
+            if (req->rspeed.data < -100)
             {
                 this->rwp = -100;
             }
-            else if (req->rspeed > 100)
+            else if (req->rspeed.data > 100)
             {
                 this->rwp = 100;
             }
             else
             {
-                this->rwp = req->rspeed;
+                this->rwp = req->rspeed.data;
             }
-            this->time = req->time / 1000;
+            this->time = req->time.data / 1000;
             this->MoveWheelsThread = std::thread(std::bind (&MoveWheels::Handle_MoveWheels, this));
             this->MoveWheelsThread.detach();
             return true;

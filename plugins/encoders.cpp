@@ -69,16 +69,15 @@ namespace gazebo {
 
         public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
         {	
+            this->model = _model;
+            this->ros_node_ = gazebo_ros::Node::Get(_sdf);
+
             // Safety check
             if (_model->GetJointCount() == 0)
             {
-                std::cerr << "Invalid joint count, model not loaded\n";
+                RCLCPP_ERROR(this->ros_node_->get_logger(), "Invalid joint count, model not loaded");
                 return;
             }
-
-            this->model = _model;
-
-            this->ros_node_ = gazebo_ros::Node::Get(_sdf);
 	
             // Create topics to publish
             this->pubWheels = this->ros_node_->create_publisher<robobo_msgs::msg::Wheels>("/" + this->model->GetName() + "/wheels", 1);
